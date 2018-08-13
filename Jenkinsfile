@@ -37,7 +37,7 @@ node {
             } catch(err) {
                 throw err
             } finally {
-                junit '**/target/test-results/karma/TESTS-*.xml'
+                junit '**/reports/TEST-*.xml'
             }
         }
 
