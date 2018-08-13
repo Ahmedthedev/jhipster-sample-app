@@ -45,7 +45,7 @@ node {
         }
 
         stage('quality analysis') {
-                sh "./mvnw sonar:sonar"
+                sh "mvn sonar:sonar -Dsonar.host.url=127.0.0.1:9000"
         }
     
 }
