@@ -14,7 +14,7 @@ node {
         }
 
         stage('install tools') {
-            sh "./mvnw com.github.eirslett:frontend-maven-plugin:install-node-and-yarn -DnodeVersion=v6.11.3 -DyarnVersion=v1.1.0"
+            sh "./mvnw com.github.eirslett:frontend-maven-plugin:install-node-and-yarn -DnodeVersion=v8.9.0 -DyarnVersion=v1.3.2"
         }
 
         stage('yarn install') {
