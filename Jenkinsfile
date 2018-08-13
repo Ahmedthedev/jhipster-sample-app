@@ -36,9 +36,7 @@ node {
                 sh "./mvnw com.github.eirslett:frontend-maven-plugin:yarn -Dfrontend.yarn.arguments=test"
             } catch(err) {
                 throw err
-            } finally {
-                junit '/var/jenkins_home/workspace/jhipsterSample/target/surefire-reports/TEST-*.xml'
-            }
+            } 
         }
 
         stage('packaging') {
