@@ -37,7 +37,7 @@ node {
             } catch(err) {
                 throw err
             } finally {
-                junit '**/target/surefire-reports/TEST-*.xml'
+                junit '/var/jenkins_home/workspace/jhipsterSample/target/surefire-reports/TEST-*.xml'
             }
         }
 
