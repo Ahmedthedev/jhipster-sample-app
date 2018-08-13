@@ -1,25 +1,56 @@
-pipeline {
-    agent any
+#!/usr/bin/env groovy
 
-    tools {
-        jdk 'jdk8'
-        maven 'maven3'
+node {
+    stage('checkout') {
+        checkout scm
     }
 
-    stages {
-        stage('install and sonar parallel') {
-            steps {
-                parallel(install: {
-                    sh "mvn -U clean test cobertura:cobertura -Dcobertura.report.format=xml"
-                }, sonar: {
-                    sh "mvn sonar:sonar -Dsonar.host.url=${env.SONARQUBE_HOST}"
-                })
+    docker.image('openjdk:8').inside('-u root -e MAVEN_OPTS="-Duser.home=./"') {
+        stage('check java') {
+            sh "java -version"
+        }
+
+        stage('clean') {
+            sh "chmod +x mvnw"
+            sh "./mvnw clean"
+        }
+
+        stage('install tools') {
+            sh "./mvnw com.github.eirslett:frontend-maven-plugin:install-node-and-yarn -DnodeVersion=v6.11.3 -DyarnVersion=v1.1.0"
+        }
+
+        stage('yarn install') {
+            sh "./mvnw com.github.eirslett:frontend-maven-plugin:yarn"
+        }
+
+        stage('backend tests') {
+            try {
+                sh "./mvnw test"
+            } catch(err) {
+                throw err
+            } finally {
+                junit '**/target/surefire-reports/TEST-*.xml'
             }
-            post {
-                always {
-                    junit '**/target/*-reports/TEST-*.xml'
-                    step([$class: 'CoberturaPublisher', coberturaReportFile: 'target/site/cobertura/coverage.xml'])
-                }
+        }
+
+        stage('frontend tests') {
+            try {
+                sh "./mvnw com.github.eirslett:frontend-maven-plugin:yarn -Dfrontend.yarn.arguments=test"
+            } catch(err) {
+                throw err
+            } finally {
+                junit '**/target/test-results/karma/TESTS-*.xml'
+            }
+        }
+
+        stage('packaging') {
+            sh "./mvnw package -Pprod -DskipTests"
+            archiveArtifacts artifacts: '**/target/*.war', fingerprint: true
+        }
+
+        stage('quality analysis') {
+            withSonarQubeEnv('Sonar') {
+                sh "./mvnw sonar:sonar"
             }
         }
     }
