@@ -1,4 +1,9 @@
 #!/usr/bin/env groovy
+properties([
+    pipelineTriggers([
+        scm('H/5 * * * *')
+    ])
+])
 
 node {
     stage('checkout') {
