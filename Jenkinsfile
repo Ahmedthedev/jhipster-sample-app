@@ -3,6 +3,8 @@
 properties([
    pipelineTriggers([pollSCM('H/5 * * * *')])
 ])
+  
+
 
 
 node {
