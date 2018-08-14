@@ -1,11 +1,9 @@
 #!/usr/bin/env groovy
 
-pipeline {
-    agent any
-    triggers {
-        cron('H/5 * * * *')
-    }
-}
+properties([
+   pipelineTriggers([pollSCM('H/5 * * * *')])
+])
+
 
 node {
     stage('checkout') {
