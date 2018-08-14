@@ -1,14 +1,9 @@
 #!/usr/bin/env groovy
 
- 
+triggers {
+        pollSCM('H/5 * * * *')
+    }
 
-
-
-properties([
-    pipelineTriggers([
-        [$class: "SCMTrigger", scmpoll_spec: "H/5 * * * *"],
-    ])
-])
 node {
     stage('checkout') {
         checkout scm
